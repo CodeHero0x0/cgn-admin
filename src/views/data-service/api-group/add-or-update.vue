@@ -19,7 +19,19 @@
 					<el-input v-model="dataForm.name" placeholder="名称"></el-input>
 				</el-form-item>
 				<el-form-item label="类型" prop="type" v-if="dataForm.parentId != 0">
-					<fast-select :disabled="!!dataForm.id" v-model="dataForm.type" placeholder="类型" dict-type="api_group_type" clearable></fast-select>
+					<!-- <fast-select :disabled="!!dataForm.id" v-model="dataForm.type" placeholder="类型" dict-type="api_group_type" clearable></fast-select> -->
+					<el-select 
+						:disabled="!!dataForm.id" 
+						v-model="dataForm.type" 
+						placeholder="类型" 
+						clearable>
+						<el-option 
+							v-for="item in dataForm.type" 
+							:key="item" 
+							:label="item" 
+							:value="item">
+						</el-option>
+					</el-select>
 				</el-form-item>
 				<el-form-item label="序号" prop="orderNo">
 					<el-input-number v-model="dataForm.orderNo" :max='9999' placeholder="序号"></el-input-number>
@@ -60,8 +72,6 @@ const dataForm = reactive({
 
 const init = (id?: number, parentId: any, parentPath: any) => {
 	visible.value = true
-	
-	dataForm.id = ''
 
 	// 重置表单数据
 	if (dataFormRef.value) {
@@ -69,6 +79,7 @@ const init = (id?: number, parentId: any, parentPath: any) => {
 	}
 	dataForm.parentId = parentId
 	dataForm.parentPath = parentPath
+	console.log(11111111,dataForm)
 	
 	if(parentId) {
 		useApiGroupApi(parentId).then(res => {
@@ -89,7 +100,6 @@ const init = (id?: number, parentId: any, parentPath: any) => {
 		getCatalogue(id)
 	}
 }
-
 const getCatalogue = (id: number) => {
 	useApiGroupApi(id).then(res => {
 		Object.assign(dataForm, res.data)
