@@ -17,9 +17,9 @@
 						<el-form-item label="请求方式" prop="type" >
 							<fast-select v-model="basicDataForm.type" dict-type="api_type" placeholder="请选择" clearable filterable></fast-select>
 						</el-form-item>
-						<el-form-item prop="dataSubject" label="所属主题">
-							<fast-select v-model="basicDataForm.dataSubject" :isLabel="true" dict-type="data_subject" placeholder="所属主题" clearable filterable></fast-select>
-						</el-form-item>
+bug<!--						<el-form-item prop="dataSubject" label="所属主题">-->
+<!--							<fast-select v-model="basicDataForm.dataSubject" :isLabel="true" dict-type="data_subject" placeholder="所属主题" clearable filterable></fast-select>-->
+<!--						</el-form-item>-->
 						<el-form-item label="描述" prop="note" >
 						 <el-input
 								v-model="basicDataForm.note"
@@ -32,13 +32,13 @@
 				</el-tab-pane>
 				<el-tab-pane label="API SQL 配置">
 					 <el-form ref="apiSqlFormRef"  label-width="120px"  :rules="apiSqlFormRules" :model="apiSqlForm">
-						<el-form-item label="选择" prop="sqlDbType" >
-							<el-radio-group v-model="apiSqlForm.sqlDbType">
-								<el-radio :label="1" border>数据库</el-radio>
-								<el-radio :label="2" border>中台库</el-radio>
-							</el-radio-group>
-							<el-button style="margin-left:20px" :icon="Search" type="primary" v-show="!!apiSqlForm.sqlDbType" @click="dbLook()">库表信息</el-button>
-						</el-form-item>
+<!--						<el-form-item label="选择" prop="sqlDbType" >-->
+<!--							<el-radio-group v-model="apiSqlForm.sqlDbType">-->
+<!--								<el-radio :label="1" border>数据库</el-radio>-->
+<!--								<el-radio :label="2" border>中台库</el-radio>-->
+<!--							</el-radio-group>-->
+<!--							<el-button style="margin-left:20px" :icon="Search" type="primary" v-show="!!apiSqlForm.sqlDbType" @click="dbLook()">库表信息</el-button>-->
+<!--						</el-form-item>-->
 						<el-form-item label="选择" prop="databaseId" v-if="apiSqlForm.sqlDbType=='1'" >
 							<el-select v-model="apiSqlForm.databaseId"
 												 clearable
@@ -137,6 +137,7 @@ import { useApiConfigApi, useApiConfigSubmitApi, getIpPortApi } from '@/api/data
 // import Middledb from '../../data-development/production/middledb.vue'
 import SqlStudio from './sql-studio.vue'
 import ParamStudio from './param-studio.vue'
+import FastSelect from "@/components/fast-select/src/fast-select.vue";
 
 
 // onMounted(()=>{
@@ -186,7 +187,7 @@ const basicDataFormRules = ref({
 	name: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	path: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	type: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	dataSubject: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
+	// dataSubject: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 })
 //基本信息表
 const apiSqlFormRef = ref()
@@ -208,8 +209,8 @@ const apiSqlFormRules = ref({
 	sqlSeparator: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	sqlMaxRow: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	contentType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	sqlDbType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	databaseId: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+	// sqlDbType: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
+	// databaseId: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	sqlText: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	jsonParam: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	responseResult: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
@@ -255,7 +256,7 @@ const getApiConfig = (id: number) => {
 		basicDataForm.type = resData.type
 		basicDataForm.note = resData.note
 		basicDataForm.status = resData.status
-		basicDataForm.dataSubject = resData.dataSubject
+		// basicDataForm.dataSubject = resData.dataSubject
 
 		apiSqlForm.sqlDbType = resData.sqlDbType
 		apiSqlForm.sqlParam = resData.sqlParam

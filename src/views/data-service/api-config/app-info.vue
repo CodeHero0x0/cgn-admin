@@ -24,9 +24,9 @@
 						<el-form-item label="调用失败次数" prop="type" label-width="auto">
 							<span>{{basicDataForm.requestedFailedTimes}}</span>
 						</el-form-item>
-						<el-form-item label="所属主题" prop="type" label-width="auto">
-							<span>{{basicDataForm.dataSubject}}</span>
-						</el-form-item>
+<!--						<el-form-item label="所属主题" prop="type" label-width="auto">-->
+<!--							<span>{{basicDataForm.dataSubject}}</span>-->
+<!--						</el-form-item>-->
 						<el-form-item label="描述" prop="note" label-width="auto">
 							<p>{{basicDataForm.note}}</p>
 						</el-form-item>

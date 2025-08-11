@@ -3,6 +3,8 @@ import ElementPlus from 'element-plus'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import App from './App.vue'
 import { createPinia } from 'pinia'
+import { registerStore } from './store'
+
 import { directive } from './utils/directive'
 import { router } from './router'
 import { i18n } from './i18n'
@@ -29,6 +31,7 @@ VXETable.config({
 
 const app = createApp(App)
 app.use(createPinia())
+registerStore()
 
 // element plus图标 全局注册
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
