@@ -37,7 +37,7 @@ export const getAuthInfoApi = (authId: number) => {
 }
 
 export const ipPortApi = () => {
-	return service.get('/data-service/api-config/ip-port/')
+	return service.get('/data-service/api-config/ip-port')
 }
 
 export const resetRequestedTimesApi =(authId: number) => {
