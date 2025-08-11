@@ -95,8 +95,8 @@
 									placement="top-end"
 								>
 								<el-radio-group v-model="apiSqlForm.previlege">
-									<el-radio :label="0" border>开放</el-radio>
-									<el-radio :label="1" border>私有</el-radio>
+									<el-radio :value="0" border>开放</el-radio>
+									<el-radio :value="1" border>私有</el-radio>
 								</el-radio-group>
 							</el-tooltip>
 						</el-form-item>

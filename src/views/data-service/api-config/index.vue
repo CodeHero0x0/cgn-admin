@@ -6,26 +6,11 @@
           <el-input v-model="state.queryForm.name" placeholder="名称"></el-input>
         </el-form-item>
         <el-form-item>
-          <fast-select v-model="state.queryForm.contentType" dict-type="content_type" placeholder="内容类型" clearable
-                       filterable></fast-select>
-        </el-form-item>
-        <el-form-item>
           <fast-select v-model="state.queryForm.status" dict-type="release_status" placeholder="状态" clearable
                        filterable></fast-select>
         </el-form-item>
 
-        <el-form-item v-if="!ifMarket">
-          <el-select v-model="state.queryForm.databaseId"
-                     clearable
-                     filterable
-                     placeholder="数据库">
-            <el-option v-for="(item,index) in state.databaseList"
-                       :key="item.id"
-                       :label="`[${item.id}]${item.name}`"
-                       :value="item.id"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item v-if="!ifMarket">
+        <el-form-item >
           <fast-select v-model="state.queryForm.previlege" dict-type="yes_or_no" placeholder="是否私有" clearable
                        filterable></fast-select>
         </el-form-item>
@@ -45,9 +30,6 @@
         <el-form-item v-if="!ifAuth">
           <el-button type="warning" @click="exportDocs()">导出文档</el-button>
         </el-form-item>
-        <!-- <el-form-item>
-          <el-button v-auth="'srt:api-config:delete'" type="danger" @click="deleteBatchHandle()">删除</el-button>
-        </el-form-item> -->
       </el-form>
       <el-table v-loading="state.dataListLoading" :data="state.dataList" border style="width: 100%"
                 max-height="calc(100vh - 400px )" @selection-change="selectionChangeHandle">
