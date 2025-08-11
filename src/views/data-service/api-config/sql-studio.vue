@@ -60,9 +60,9 @@ import { format } from 'sql-formatter'
 import { language as sqlLanguage } from 'monaco-editor/esm/vs/basic-languages/sql/sql.js';
 import { nextTick,ref,onBeforeUnmount,onMounted,inject } from 'vue'
 import JsonStudio from './json-studio.vue'
-// import ConsoleResult from '../../data-development/production/console-result.vue'
 import { ElMessage } from 'element-plus/es'
 import { executeSqlApi } from '@/api/data-service/apiConfig'
+import ConsoleResult from "@/components/console-result/console-result.vue";
 
 
 const text=ref('')
@@ -205,27 +205,15 @@ const JsonStudioRef = ref()
 const executeSql = () => {
 	const sqlDto = {}
 	sqlDto.openTrans = apiSqlForm.openTrans
-	sqlDto.sqlDbType = apiSqlForm.sqlDbType
-	sqlDto.databaseId = apiSqlForm.databaseId
 	sqlDto.statement = getEditorValue()
 	sqlDto.sqlSeparator = apiSqlForm.sqlSeparator
 	sqlDto.sqlMaxRow = apiSqlForm.sqlMaxRow
-	if(!sqlDto.sqlDbType) {
-		ElMessage.warning("请选择数据库类别")
-		return
-	}
+
 	if(!sqlDto.sqlSeparator) {
 		ElMessage.warning("sql分隔符不能为空")
 		return
 	}
-	if(!sqlDto.sqlDbType) {
-		ElMessage.warning("请选择数据库类型")
-		return
-	}
-	if(!sqlDto.databaseId && sqlDto.sqlDbType == 1) {
-		ElMessage.warning("请选择数据库")
-		return
-	}
+
 	if(!sqlDto.statement) {
 		ElMessage.warning("请输入sql语句")
 		return

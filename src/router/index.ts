@@ -187,6 +187,8 @@ router.beforeEach(async (to, from, next) => {
 					await userStore.getUserInfoAction()
 					await userStore.getAuthorityListAction()
 					await appStore.getDictListAction()
+					await appStore.getSysUserListAction()
+					await appStore.getSysOrgListAction()
 				} catch (error) {
 					// 请求异常，则跳转到登录页
 					userStore?.setToken('')

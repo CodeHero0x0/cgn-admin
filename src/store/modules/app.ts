@@ -2,6 +2,8 @@ import { defineStore } from 'pinia'
 import { ITheme } from '@/store/theme/interface'
 import cache from '@/utils/cache'
 import { useDictTypeAllApi } from '@/api/sys/dict'
+import {listAllUserApi} from "@/api/sys/user";
+import {listAllOrgApi} from "@/api/sys/orgs";
 
 export const useAppStore = defineStore('appStore', {
 	state: () => ({
@@ -13,6 +15,10 @@ export const useAppStore = defineStore('appStore', {
 		componentSize: cache.getComponentSize(),
 		// 字典列表
 		dictList: [],
+		//部门列表
+		orgList: [],
+		//用户列表
+		sysUserList: [],
 		// 主题
 		theme: cache.getTheme()
 	}),
@@ -32,6 +38,14 @@ export const useAppStore = defineStore('appStore', {
 		setComponentSize(size: string) {
 			this.componentSize = size
 			cache.setComponentSize(size)
+		},
+		async getSysUserListAction() {
+			const { data } = await listAllUserApi()
+			this.sysUserList = data || []
+		},
+		async getSysOrgListAction() {
+			const { data } = await listAllOrgApi()
+			this.orgList = data || []
 		},
 		async getDictListAction() {
 			const { data } = await useDictTypeAllApi()

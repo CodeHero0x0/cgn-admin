@@ -17,9 +17,6 @@
 						<el-form-item label="请求方式" prop="type" >
 							<fast-select v-model="basicDataForm.type" dict-type="api_type" placeholder="请选择" clearable filterable></fast-select>
 						</el-form-item>
-bug<!--						<el-form-item prop="dataSubject" label="所属主题">-->
-<!--							<fast-select v-model="basicDataForm.dataSubject" :isLabel="true" dict-type="data_subject" placeholder="所属主题" clearable filterable></fast-select>-->
-<!--						</el-form-item>-->
 						<el-form-item label="描述" prop="note" >
 						 <el-input
 								v-model="basicDataForm.note"
@@ -32,13 +29,6 @@ bug<!--						<el-form-item prop="dataSubject" label="所属主题">-->
 				</el-tab-pane>
 				<el-tab-pane label="API SQL 配置">
 					 <el-form ref="apiSqlFormRef"  label-width="120px"  :rules="apiSqlFormRules" :model="apiSqlForm">
-<!--						<el-form-item label="选择" prop="sqlDbType" >-->
-<!--							<el-radio-group v-model="apiSqlForm.sqlDbType">-->
-<!--								<el-radio :label="1" border>数据库</el-radio>-->
-<!--								<el-radio :label="2" border>中台库</el-radio>-->
-<!--							</el-radio-group>-->
-<!--							<el-button style="margin-left:20px" :icon="Search" type="primary" v-show="!!apiSqlForm.sqlDbType" @click="dbLook()">库表信息</el-button>-->
-<!--						</el-form-item>-->
 						<el-form-item label="选择" prop="databaseId" v-if="apiSqlForm.sqlDbType=='1'" >
 							<el-select v-model="apiSqlForm.databaseId"
 												 clearable
@@ -120,46 +110,20 @@ bug<!--						<el-form-item prop="dataSubject" label="所属主题">-->
 		</template>
 	</el-drawer>
 
-	<el-dialog v-model="dbLookDialog" title="库表信息">
-		<Databases ref="databasesRef" v-if="apiSqlForm.sqlDbType == 1"></Databases>
-		<Middledb ref="middledbRef" v-if="apiSqlForm.sqlDbType == 2"></Middledb>
-	</el-dialog>
 
 </template>
 
 <script setup lang="ts">
 import { reactive, ref, onMounted, provide } from 'vue'
 import { ElMessage } from 'element-plus/es'
-import { Search } from '@element-plus/icons-vue'
-// import { listDatabase } from '@/api/data-integrate/database'
 import { useApiConfigApi, useApiConfigSubmitApi, getIpPortApi } from '@/api/data-service/apiConfig'
-// import Databases from '../../data-development/production/databases.vue'
-// import Middledb from '../../data-development/production/middledb.vue'
 import SqlStudio from './sql-studio.vue'
 import ParamStudio from './param-studio.vue'
 import FastSelect from "@/components/fast-select/src/fast-select.vue";
 
-
-// onMounted(()=>{
-// 	//获取数据库列表
-// 	getDatabaseList()
-// 	getIpPort()
-// })
-//
-
-//选择数据源类型
-// const getDatabaseList = () => {
-// 	listDatabase().then(res => {
-// 		apiSqlForm.databaseList = res.data
-// 	})
-// }
-
-//打开库表信息查看
-const dbLookDialog = ref(false)
-const dbLook = () => {
-	dbLookDialog.value = true
-}
-
+onMounted(()=>{
+  getIpPort()
+})
 const emit = defineEmits(['refreshDataList'])
 
 const visible = ref(false)

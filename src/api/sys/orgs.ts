@@ -19,3 +19,6 @@ export const useOrgSubmitApi = (dataForm: any) => {
 		return service.post('/sys/org', dataForm)
 	}
 }
+export const listAllOrgApi = () => {
+	return service.get('/sys/org/list-all')
+}

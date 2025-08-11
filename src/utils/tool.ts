@@ -148,7 +148,19 @@ export const withInstall = <T>(component: T, alias?: string) => {
     }
     return component as T & Plugin
 }
-
+export const getNameByUserId = (sysUserList: any[], userId: number) => {
+    const user = sysUserList.find((element: any) => element.id === userId)
+    if (user) {
+        const username = user.username
+        if (username) {
+            return username
+        } else {
+            return userId
+        }
+    } else {
+        return userId
+    }
+}
 // 生成数字字母混合字符串
 export const getRandom = (num: number) => {
     const chars = [

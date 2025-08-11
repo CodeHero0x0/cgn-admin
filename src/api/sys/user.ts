@@ -23,7 +23,9 @@ export const useUserApi = (id: number) => {
 export const useRealNameListApi = (idList: number[]) => {
 	return service.post('/sys/user/nameList', idList)
 }
-
+export const listAllUserApi = () => {
+	return service.get('/sys/user/list-all')
+}
 export const useUserSubmitApi = (dataForm: any) => {
 	if (dataForm.id) {
 		return service.put('/sys/user', dataForm)

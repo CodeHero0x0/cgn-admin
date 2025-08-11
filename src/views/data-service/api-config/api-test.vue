@@ -1,5 +1,5 @@
 <template>
-	<el-drawer v-model="visible" title="API 测试" size="100%" :destroy-on-close="true">
+	<el-drawer v-model="visible" title="API 测试" size="100%" :destroy-on-close="false">
 		<div>
 			<el-tabs
 			  tab-position="top"
@@ -16,10 +16,10 @@
 						<div><b>请求地址：</b></div><br>
 						<el-form-item label="Request Url" prop="url" label-width="auto">
 							<el-input v-model="apiTestForm.url"></el-input>
-						</el-form-item>	
+						</el-form-item>
 						<el-form-item label="Request Method" prop="type" label-width="auto">
 							<el-input disabled v-model="apiTestForm.type"></el-input>
-						</el-form-item>	
+						</el-form-item>
 						<div><b>请求头：</b></div><br>
 						<el-form-item label="Content-Type" prop="contentType" label-width="auto">
 							<el-input disabled v-model="apiTestForm.contentType"></el-input>
@@ -101,7 +101,7 @@ const setApiTestParam = (jsonParam: any) => {
 		}
 		setTimeout(() => {setApiTestParam(jsonParam)},500)
 	}
-	
+
 const setResponseTestResult = () => {
 		if (responseTestResultRef.value) {
 			responseTestResultRef.value.setEditorValue('')
@@ -116,7 +116,7 @@ const requestClient = axios.create({
 })
 const clickRequest = () => {
 	let jsonParam = requestTestParamRef.value.getEditorValue()
-	jsonParam = jsonParam ? JSON.parse(jsonParam) : {} 
+	jsonParam = jsonParam ? JSON.parse(jsonParam) : {}
 	const config = {
 	  headers:{
 		 apiToken: apiTestForm.apiToken

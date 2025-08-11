@@ -37,11 +37,11 @@
 					<ApiConfigIndex ref="apiConfigRef"></ApiConfigIndex>
 				</div>
 			</div>
-			
+
 			<!-- 右键菜单 -->
-			<div :style="{'z-index': 9999, position: 'fixed',left: ckRightOptionData.optionCardX + 'px', 
+			<div :style="{'z-index': 9999, position: 'fixed',left: ckRightOptionData.optionCardX + 'px',
 							top: ckRightOptionData.optionCardY + 'px', width: '100px', background: 'white',
-							 'box-shadow': '0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04)'}" 
+							 'box-shadow': '0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04)'}"
 							 v-show="ckRightOptionData.optionCardShow" id="option-button-group">
 				<el-button v-show="ckRightOptionData.optionData.type == '1'" @click="appendCatalogueChild" class="option-card-button">添加子目录</el-button>
 				<el-button @click="renameCatalogue" class="option-card-button">重命名</el-button>
@@ -158,7 +158,7 @@ const ckRightOption = (e, data, n, t) => {
 	if (props.ifAuth) {
 		return
 	}
-	ckRightOptionData.optionCardShow = false 
+	ckRightOptionData.optionCardShow = false
 	ckRightOptionData.optionCardX = e.x   // 让右键菜单出现在鼠标右键的位置
 	ckRightOptionData.optionCardY = e.y
 	ckRightOptionData.optionData = data
@@ -188,10 +188,10 @@ const catalogueTreeNodeCk = (e, data, n, t) => {
 	OptionCardClose()
 	//如果是api目录，添加tab
 	console.log(data.data)
-	if(data.data.type == '2') {	
-		apiConfigRef.value.init(data.data.id, data.data.path, null, props.ifAuth)
+	if(data.data.type == '2') {
+		apiConfigRef.value.init(data.data.id, data.data.path, null)
 	}
-} 
+}
 
 </script>
 
@@ -210,7 +210,7 @@ const catalogueTreeNodeCk = (e, data, n, t) => {
 		flex: 6;
 		width: 900px;
 	}
-	
+
 	/* 树节点相关属性 */
 	.apiGroupTreeDiv .el-tree-node__content {
 			height: 35px;
@@ -223,7 +223,7 @@ const catalogueTreeNodeCk = (e, data, n, t) => {
 		-ms-user-select: none;
 		user-select: none;
 	}
-	
+
 	.option-card-button {
 		width: 100%;
 		margin-left: 0 !important;
