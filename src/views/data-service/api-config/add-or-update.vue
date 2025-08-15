@@ -151,7 +151,6 @@ const basicDataFormRules = ref({
 	name: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	path: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
 	type: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-	// dataSubject: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
 })
 //基本信息表
 const apiSqlFormRef = ref()
