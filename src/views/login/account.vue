@@ -25,6 +25,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import constant from '@/utils/constant'
 import { sm2Encrypt } from '@/utils/smCrypto'
+import { fa } from 'element-plus/es/locale'
 
 const userStore = useUserStore()
 const router = useRouter()
@@ -88,6 +89,8 @@ const onLogin = () => {
 		userStore
 			.accountLoginAction(loginData)
 			.then(() => {
+				//console.log(11,constant.loginPage)
+				//return false
 				router.push({ path: constant.loginPage })
 			})
 			.catch(() => {

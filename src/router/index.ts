@@ -53,30 +53,30 @@ const asyncRoutes: RouteRecordRaw = {
 
 // 配置控制台菜单
 export const dashboardMenu = [
-	{
-		id: 100,
-		name: 'Dashboard',
-		url: null,
-		openStyle: 0,
-		icon: 'icon-appstore',
-		children: [
-			{
-				id: 101,
-				name: '首页',
-				url: 'dashboard/index',
-				openStyle: 0,
-				icon: 'icon-home',
-				affix: true
-			},
-			{
-				id: 102,
-				name: '工作台',
-				url: 'dashboard/workbench',
-				openStyle: 0,
-				icon: 'icon-appstore'
-			}
-		]
-	}
+	// {
+	// 	id: 100,
+	// 	name: 'Dashboard',
+	// 	url: null,
+	// 	openStyle: 0,
+	// 	icon: 'icon-appstore',
+	// 	children: [
+	// 		{
+	// 			id: 101,
+	// 			name: '首页',
+	// 			url: 'dashboard/index',
+	// 			openStyle: 0,
+	// 			icon: 'icon-home',
+	// 			affix: true
+	// 		},
+	// 		{
+	// 			id: 102,
+	// 			name: '工作台',
+	// 			url: 'dashboard/workbench',
+	// 			openStyle: 0,
+	// 			icon: 'icon-appstore'
+	// 		}
+	// 	]
+	// }
 ]
 
 // 配置常量菜单
