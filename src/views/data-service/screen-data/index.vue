@@ -16,23 +16,20 @@
 		</el-form>
 		<el-table v-loading="state.dataListLoading" :data="state.dataList" border style="width: 100%" @selection-change="selectionChangeHandle">
 			<el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
-			<el-table-column prop="ip" label="IP地址" header-align="center" align="center" width="200"></el-table-column>
-			<el-table-column prop="url" label="url地址" header-align="center" align="center" width="200" show-overflow-tooltip></el-table-column>
-			<fast-table-org-column prop="orgId" label="所属机构" header-align="center" align="center"></fast-table-org-column>
-			<el-table-column prop="status" label="状态码" header-align="center" align="center">
-				<template #default="scope">
-					<el-tag type="success" v-if="scope.row.status == 200">{{scope.row.status}}</el-tag>
-					<el-tag v-else type="danger">{{scope.row.status}}</el-tag>
-				</template>
-			</el-table-column>
-			<el-table-column prop="duration" label="时长(ms)" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="apiName" label="api名称" header-align="center" align="center"></el-table-column>
-			<el-table-column show-overflow-tooltip prop="error" label="错误信息" header-align="center" align="center"></el-table-column>
-			<el-table-column prop="createTime" label="创建时间" header-align="center" align="center"></el-table-column>
-			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
+			<el-table-column prop="viewName" label="大屏名称" header-align="center" align="center" width="200"></el-table-column>
+			<el-table-column prop="majorCategory" label="一级分类" header-align="center" align="center" width="200" show-overflow-tooltip></el-table-column>
+			<el-table-column prop="midCategory" label="二级分类" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="subCategory" label="三级分类" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="fourCategory" label="四级分类" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="metricName" label="指标名称" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="metricValue" label="指标值" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="unit" label="指标单位" header-align="center" align="center"></el-table-column>
+			<el-table-column prop="description" label="数据描述" header-align="center" align="center"width="300"></el-table-column>
+			<el-table-column label="操作" fixed="right" header-align="center" align="center" width="250">
 				<template #default="scope">
 					<el-button v-auth="'data-service:log:delete'" type="primary" link @click="deleteBatchHandle(scope.row.id)">删除</el-button>
 					<el-button type="primary" link @click="handleView(scope.row)">查看</el-button>
+					<el-button type="primary" link @click="handleView(scope.row)">修改</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -100,20 +97,43 @@
 
 <script setup lang="ts" name="Data-serviceLogIndex">
 import { useCrud } from '@/hooks'
-import { reactive, ref } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
 import { ElMessage } from 'element-plus'
 import request from '@/utils/request'
 import { getIpPortApi } from '@/api/data-service/apiConfig' // 导入获取IP端口的API
 
+// 定义完整请求URL的响应式变量
+const fullDataListUrl = ref('')
 const state: IHooksOptions = reactive({
-	dataListUrl: '/data-service/log/page',
-	deleteUrl: '/data-service/log',
-	queryForm: {
-		ip: '',
-		apiName: ''
-	}
+	createdIsNeed: false,  // 阻止自动调用
+	dataListUrl: '/screen-data/page', // 修改为新的接口路径
 })
+
+// 构建完整的数据列表URL
+const buildDataListUrl = async () => {
+	try {
+		// 获取IP和端口
+		const ipPortResponse = await getIpPortApi()
+		const ipPort = ipPortResponse.data
+		
+		// 构建完整的请求URL
+		fullDataListUrl.value = `http://${ipPort}${state.dataListUrl}`
+		
+		// 删除URL中的/api部分
+		fullDataListUrl.value = fullDataListUrl.value.replace('/api', '')
+		
+		console.log('构建的完整数据列表URL:', fullDataListUrl.value)
+		
+		// 更新state中的dataListUrl
+		state.dataListUrl = fullDataListUrl.value
+		
+	} catch (error) {
+		console.error('构建数据列表URL失败:', error)
+		ElMessage.error('获取服务地址失败')
+	}
+}
+
 
 // 弹窗相关状态
 const dialogVisible = ref(false)
@@ -121,7 +141,6 @@ const currentRow = ref<any>({})
 const detailLoading = ref(false)
 const detailData = ref<any>(null)
 
-// 请求详细数据
 // 请求详细数据
 const fetchDetailData = async (urlPath: string) => {
 	try {
@@ -166,7 +185,6 @@ const fetchDetailData = async (urlPath: string) => {
 	}
 }
 
-
 // 处理查看详情
 const handleView = async (row: any) => {
 	console.log('点击查看，URL路径:', row.url)
@@ -191,5 +209,61 @@ const handleClose = () => {
 	detailLoading.value = false
 }
 
-const { getDataList, selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle } = useCrud(state)
+// 重写getDataList方法以使用完整URL
+const { selectionChangeHandle, sizeChangeHandle, currentChangeHandle, deleteBatchHandle } = useCrud(state)
+
+// 自定义getDataList方法
+const getDataList = async () => {
+	try {
+		// 确保URL已构建
+		if (!fullDataListUrl.value) {
+			await buildDataListUrl()
+		}
+		
+		// 创建独立的axios实例发起请求
+		const externalRequest = request.create({
+			timeout: 60000,
+			headers: { 
+				'Content-Type': 'application/json;charset=UTF-8',
+				'Authorization': 'ed68961a05d142b387f4a82e6672f11a'  // 添加这行
+			}
+		})
+		
+		state.dataListLoading = true
+		
+		// 构建查询参数
+		const params = {
+			viewName: '',
+			majorCategory: '天气预警',
+			midCategory: '',
+			subCategory: '',
+			fourCategory: '',
+			metricName: '',
+			page: state.page,
+			limit: state.limit,
+			order: '',
+			asc: false,
+			...state.queryForm
+		}
+		
+		const response = await externalRequest.get(fullDataListUrl.value, { params })
+		
+		state.dataList = response.data.data.list;
+		state.total = response.data.data.total || 0
+		
+		console.log('获取数据列表成功:', state.dataList)
+		
+	} catch (error) {
+		console.error('获取数据列表失败:', error)
+		ElMessage.error('获取数据失败')
+	} finally {
+		state.dataListLoading = false
+	}
+}
+
+// 组件挂载时构建URL
+onMounted(async () => {
+	await buildDataListUrl()
+	await getDataList()
+})
 </script>
