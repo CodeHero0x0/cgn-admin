@@ -193,18 +193,22 @@ import { reactive, ref, onMounted, nextTick, computed } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
 import { ElMessage, ElMessageBox, FormInstance } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
-import request from '@/utils/request'
-import { getIpPortApi } from '@/api/data-service/apiConfig'
-import { useUserStore } from '@/store/modules/user'
+import { 
+	getScreenDataListApi,
+	createScreenDataApi,
+	updateScreenDataApi,
+	deleteScreenDataApi
+} from '@/api/data-service/apiConfig'
 
-// 获取用户store
-const userStore = useUserStore()
-
-// 定义完整请求URL的响应式变量
-const fullDataListUrl = ref('')
 const state: IHooksOptions = reactive({
 	createdIsNeed: false,
 	dataListUrl: '/screen-data/page',
+	dataList: [],
+	dataListLoading: false,
+	page: 1,
+	limit: 10,
+	total: 0,
+	pageSizes: [10, 20, 50, 100],
 	queryForm: {
 		viewName: '',
 		majorCategory: '',
@@ -274,58 +278,6 @@ const editRules = {
 	metricValue: [{ required: true, message: '请输入指标值', trigger: 'blur' }]
 }
 
-// 公共方法：获取服务地址和构建URL
-const getServiceConfig = async () => {
-	const ipPortResponse = await getIpPortApi()
-	const ipPort = ipPortResponse.data.replace('/api', '')
-	return {
-		baseUrl: `http://${ipPort}screen-data`,
-		request: request.create({
-			timeout: 60000,
-			headers: { 
-				'Content-Type': 'application/json;charset=UTF-8',
-				'Authorization': `${userStore.token}`
-			}
-		})
-	}
-}
-
-// 公共方法：构建请求参数
-const buildRequestParams = (formData?: any) => {
-	const baseParams = {
-		page: state.page,
-		limit: state.limit,
-		order: '',
-		asc: false,
-		// 查询条件
-		viewName: state.queryForm.viewName || '',
-		majorCategory: state.queryForm.majorCategory || '',
-		midCategory: state.queryForm.midCategory || '',
-		subCategory: state.queryForm.subCategory || '',
-		fourCategory: state.queryForm.fourCategory || '',
-		metricName: state.queryForm.metricName || ''
-	}
-
-	if (formData) {
-		return {
-			...baseParams,
-			// 如果是编辑/删除/新增操作，使用表单数据覆盖查询条件
-			viewName: formData.viewName,
-			majorCategory: formData.majorCategory,
-			midCategory: formData.midCategory,
-			subCategory: formData.subCategory,
-			fourCategory: formData.fourCategory,
-			metricName: formData.metricName,
-			metricValue: formData.metricValue,
-			unit: formData.unit,
-			description: formData.description,
-			...(formData.id && { id: formData.id })
-		}
-	}
-
-	return baseParams
-}
-
 // 公共方法：重置表单
 const resetForm = () => {
 	editForm.value = {
@@ -355,22 +307,6 @@ const fillFormData = (row: any) => {
 		metricValue: row.metricValue || 0,
 		unit: row.unit || '',
 		description: row.description || ''
-	}
-}
-
-// 构建完整的数据列表URL
-const buildDataListUrl = async () => {
-	try {
-		const ipPortResponse = await getIpPortApi()
-		const ipPort = ipPortResponse.data
-		
-		fullDataListUrl.value = `http://${ipPort}${state.dataListUrl}`.replace('/api', '')
-		state.dataListUrl = fullDataListUrl.value
-		
-		console.log('构建的完整数据列表URL:', fullDataListUrl.value)
-	} catch (error) {
-		console.error('构建数据列表URL失败:', error)
-		ElMessage.error('获取服务地址失败')
 	}
 }
 
@@ -419,18 +355,9 @@ const deleteDialog = async (row: any) => {
 // 执行删除操作
 const handleDelete = async (row: any) => {
 	try {
-		const { baseUrl, request: externalRequest } = await getServiceConfig()
+		console.log('删除数据:', row)
 		
-		// 将删除参数改为数组形式
-		const params = [row.id] // 假设后端需要ID数组
-		
-		// 或者如果后端需要完整对象数组，使用：
-		// const params = [row]
-		
-		console.log('发送DELETE请求到screen-data:', baseUrl, params)
-		
-		const response = await externalRequest.delete(baseUrl, { data: params })
-		console.log('删除响应:', response)
+		await deleteScreenDataApi([row.id])
 		
 		ElMessage.success('删除成功')
 		await getDataList()
@@ -448,19 +375,15 @@ const handleSave = async () => {
 		await editFormRef.value.validate()
 		saveLoading.value = true
 		
-		const { baseUrl, request: externalRequest } = await getServiceConfig()
-		const params = buildRequestParams(editForm.value)
+		const formData = { ...editForm.value }
 		
-		let response
 		if (dialogType.value === '新增') {
-			console.log('发送POST请求到screen-data:', baseUrl, params)
-			response = await externalRequest.post(baseUrl, params)
+			console.log('新增数据:', formData)
+			await createScreenDataApi(formData)
 		} else {
-			console.log('发送PUT请求到screen-data:', baseUrl, params)
-			response = await externalRequest.put(baseUrl, params)
+			console.log('更新数据:', formData)
+			await updateScreenDataApi(formData)
 		}
-		
-		console.log('保存响应:', response)
 		
 		ElMessage.success(`${dialogType.value}成功`)
 		dialogVisible.value = false
@@ -490,21 +413,31 @@ const handleClose = () => {
 // 获取数据列表
 const getDataList = async () => {
 	try {
-		if (!fullDataListUrl.value) {
-			await buildDataListUrl()
-		}
-		
-		const { request: externalRequest } = await getServiceConfig()
 		state.dataListLoading = true
 		
-		const params = buildRequestParams()
-		const response = await externalRequest.get(fullDataListUrl.value, { params })
+		const params = {
+			page: state.page,
+			limit: state.limit,
+			order: '',
+			asc: false,
+			// 查询条件
+			viewName: state.queryForm.viewName || '',
+			majorCategory: state.queryForm.majorCategory || '',
+			midCategory: state.queryForm.midCategory || '',
+			subCategory: state.queryForm.subCategory || '',
+			fourCategory: state.queryForm.fourCategory || '',
+			metricName: state.queryForm.metricName || ''
+		}
 		
-		state.dataList = response.data.data.list
+		const response = await getScreenDataListApi(params)
+		
+		state.dataList = response.data.data.list || []
 		state.total = response.data.data.total || 0
 	} catch (error) {
 		console.error('获取数据列表失败:', error)
 		ElMessage.error('获取数据失败')
+		state.dataList = []
+		state.total = 0
 	} finally {
 		state.dataListLoading = false
 	}
@@ -512,9 +445,8 @@ const getDataList = async () => {
 
 const { selectionChangeHandle, sizeChangeHandle, currentChangeHandle } = useCrud(state)
 
-onMounted(async () => {
-	await buildDataListUrl()
-	await getDataList()
+onMounted(() => {
+	getDataList()
 })
 </script>
 

@@ -45,4 +45,19 @@ export const resetRequestedTimesApi =(authId: number) => {
 }
 
 
+// 大屏数据相关API
+export const getScreenDataListApi = (params: any) => {
+	return service.get('/screen-data/page', { params })
+}
 
+export const createScreenDataApi = (data: any) => {
+	return service.post('/screen-data', data)
+}
+
+export const updateScreenDataApi = (data: any) => {
+	return service.put('/screen-data', data)
+}
+
+export const deleteScreenDataApi = (ids: number[]) => {
+	return service.delete('/screen-data', { data: ids })
+}
